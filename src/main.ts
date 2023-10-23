@@ -10,69 +10,64 @@ const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 
 //defining the textures to use
-const customTextures = [
-    "/public/tile1.png",
-    "/public/tile2.png",
-    "/public/tile3.png",
-    "/public/tile4.png",
-    "/public/tile5.png",
-    "/public/tile6.png",
-    "/public/tile7.png",
-    "/public/tile8.png"
-    
+const imageUrls = [
+    "/tile1.png",
+    "/tile2.png",
+    "/tile3.png",
+    "/tile4.png",
+    "/tile5.png",
+    "/tile6.png",
+    "/tile7.png",
+    "/tile8.png"
 ];
 
 
 //defining the size of the main grid
-const numTiles = 8;
+const numTiles = 16;
 const tileSize = gridCanvas.width / numTiles;
 
 
 //defining the size of the select grid
-const numSelectables = customTextures.length;
+const numSelectables = imageUrls.length;
 const selectHeight = selectCanvas.height / numSelectables;
 
 
-//create the tilemap nested array
+//creating the tilemap nested array
 let tilemap = new Array(numTiles);
 
 for(let i = 0; i < numTiles; i++) {
     let row = new Array(numTiles);
-    for (let j = 0; j < numTiles; j++) { row[j] = 0; }
+    for (let j = 0; j < numTiles; j++) { row[j] = "/tile1.png"; }
     tilemap[i] = row;
 }
 
 //track the selected tile
-let currentTile = 0;
+let currentTile = "/tile1.png";
 
 //draw the initial canvases
 redrawTilemap();
 drawSelectCanvas();
 
 
-
 //Function that draws a texture to a specific canvas ctx
-function drawTexture(row: number, col: number, ctx: CanvasRenderingContext2D, imageIndex: number, width: number, height: number, cellSize: number) {
+function drawTexture(row: number, col: number, ctx: CanvasRenderingContext2D, imageUrl: string, width: number, height: number, cellSize: number) {
     const image = new Image();
-    image.src = customTextures[imageIndex]
+    image.src = imageUrl
     image.onload = () => {ctx.drawImage(image, row * cellSize, col * cellSize, width, height)};
 }
 
 
-
-
-// DRAWING THE MAIN CANVAS FUNCTIONS
-
+// ----- Interacting with the main tilemap -----
 
 function redrawTilemap()
 {
-    gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
     for (let i = 0; i < numTiles; i++) {
         for (let j = 0; j < numTiles; j++) {
             drawTexture(i, j, gridCtx, tilemap[i][j], gridCanvas.width / numTiles, gridCanvas.height / numTiles, tileSize);
         }
     }
 }
+
 
 gridCanvas.addEventListener("click", (e) => {
     const coordX = Math.trunc(e.offsetX / tileSize);
@@ -86,17 +81,17 @@ gridCanvas.addEventListener("click", (e) => {
 })
 
 
-// DRAWING THE SELECTABLE CANVAS
+// ----- Interacting with the selectable tilemap -----
 
 // Loop through the selectable tiles and draw textures in each cell
 function drawSelectCanvas()
 {
     for (let i = 0; i < numTiles; i++) {
-        drawTexture(0, i, selectCtx, i, selectCanvas.width, selectHeight, 64);
+        drawTexture(0, i, selectCtx, imageUrls[i], selectCanvas.width, selectHeight, 64);
     }
 }
 
 selectCanvas.addEventListener("click", (e) => {
     const coordY = Math.trunc(e.offsetY / selectHeight);
-    currentTile = coordY;
+    currentTile = imageUrls[coordY];
 })

@@ -2,7 +2,5 @@
 
 /* Add styles for the canvas */
 canvas {
-  width: "400";
-  height: "400";
   border: 5px solid #000;
 }
